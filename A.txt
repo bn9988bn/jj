@@ -1,10 +1,4 @@
-A
-B
-b
-C
-D
-E
-F
+
 G
 H
 I
