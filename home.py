@@ -55,24 +55,7 @@ def date(Id):
    return "2020-2023"
  except:
  	return False 	
-def hsp(email,rest):
-	try:
-	   	kk=email.split('@')[0]
-	   	kk2=rest.split('@')[0]
-	   	kk3=rest.split('@')[1]
-	   	kk4=email.split('@')[1]
-	   	hso1=kk
-	   	hso2=kk2
-	   	num1=hso1[0]
-	   	num2=hso1[-1]
-	   	num3=hso2[0]
-	   	num4=hso2[-1]
-	   	if num1==num3 and num2==num4 and kk3==kk4:
-	   		return 'معلومات صح ✈️'
-	   	else:
-	   		return 'معلومات خطأ 😜'
-	except Exception as e:
-		return 'غير معلوم 🤐'
+
 def info(email):
     stp=email+'@gmail.com'
     #print(stp)
@@ -153,8 +136,8 @@ def info(email):
         profile_pic_url=user_info['profile_pic_url']
         ff=f'''
 ¸¸.•´¯•.¸ 𝑯𝑺𝑶¸.•´¯•.¸¸ 
-𝙶𝙼𝙰𝙸𝙻 : {email}
-𝚁𝙴𝚂𝚃𝙴𝚃: {hsp(stp,rest)}
+𝙶𝙼𝙰𝙸𝙻 : {email}@gmail.com
+𝚁𝙴𝚂𝚃𝙴𝚃:{rest} 
 𝙽𝙰𝙼𝙴 : {full_name}
 𝙵𝙾𝙻𝙻𝙾𝚆𝙴𝚁𝚂:{followers}
 𝙵𝙾𝙻𝙻𝙾𝙸𝙽𝙶: {following}
@@ -176,7 +159,7 @@ Py- @ii33cc
         ff=f'''
 ¸¸.•´¯•.¸ 𝑯𝑺𝑶¸.•´¯•.¸¸ 
 𝙶𝙼𝙰𝙸𝙻 : {email}
-𝚁𝙴𝚂𝚃𝙴𝚃: {hsp(stp,rest)}
+𝚁𝙴𝚂𝚃𝙴𝚃: {rest}
 𝚒𝚗𝚏𝚘 : https://www.instagram.com/{username}?igsh=bXRmcXUyMXVxM3Mx
 ¸¸.•´¯•.¸ 𝑯𝑺𝑶¸.•´¯•.¸¸
 Py- @ii33cc        
