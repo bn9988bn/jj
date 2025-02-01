@@ -1,36 +1,13 @@
-import telebot
 import requests
-import threading
-import os
+import time
 import json
-
-# ضع هنا توكن البوت الخاص بك
-BOT_TOKEN = "7784698847:AAFeNskIwmOOjW2-fLUmz6MoNODSm2Mp4AQ"
-
-bot = telebot.TeleBot(BOT_TOKEN)
-users_data = {}
-
-# زرار رئيسي
-main_keyboard = telebot.types.InlineKeyboardMarkup()
-btn_scrape = telebot.types.InlineKeyboardButton("Get Id ", callback_data="scrape_ids")
-btn_close = telebot.types.InlineKeyboardButton("Add Close Frind", callback_data="add_close_friends")
-main_keyboard.add(btn_scrape, btn_close)
-
-
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.send_message(message.chat.id, "Welcome From Bot Instagram", reply_markup=main_keyboard)
-
-
-# ** سحب الإيديات **
-def scrape_ids(user_id, chat_id):
-    data = users_data[user_id]
-    cookie, target_id = data['cookie'], data['target_id']
-
-    url = f"https://www.instagram.com/api/v1/friendships/{target_id}/followers/"
-    params = {'count': "12", 'search_surface': "follow_list_page"}
-    headers = {
-        'User-Agent': "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Mobile Safari/537.36",
+import threading
+from concurrent.futures import ThreadPoolExecutor
+# إعدادات الطلب
+BASE_URL = "https://www.instagram.com/api/v1/friendships/{user_id}/followers/"
+USER_ID = "71633189810"  # استبدل بـ ID الحساب المطلوب
+HEADERS = {
+    'User-Agent': "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Mobile Safari/537.36",
   'sec-ch-ua': "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
   'sec-ch-ua-model': "\"RMX3941\"",
   'x-ig-www-claim': "hmac.AR0uuKHDvVcHh3Jxe3VHOC7fPxjCYKrVnye9cqS2P08etAI8",
@@ -49,148 +26,50 @@ def scrape_ids(user_id, chat_id):
   'sec-fetch-dest': "empty",
   'referer': "https://www.instagram.com/mafeseall/followers/",
   'accept-language': "en-IQ,en;q=0.9,ar-IQ;q=0.8,ar;q=0.7,en-GB;q=0.6,en-US;q=0.5",
-  'Cookie':f"mid=Z4aoMAABAAF77a58sl5k29nUDdAO; datr=MKiGZ0LFs4cyFS4rN67pxDTZ; ig_did=75345212-6AA2-4844-8E1D-E906E3DB744F; ig_nrcb=1; ps_l=1; ps_n=1; wd=360x708; csrftoken=loRryvu8mfFMXIQ4lE2qXyzFZC0IVK1j; ds_user_id=307132558; sessionid={cookie}; rur=\"CLN\\054307132558\\0541769957722:01f7642057830ce2b01459e98c34b17340b0aa1d31bc72d21f2c92031fe95ef768e3134d\" ",
-    }
+  'Cookie':cookie
+}
+MAX_THREADS = 5  # عدد الـ Threads
+followers = []  # قائمة المتابعين
+lock = threading.Lock()  # قفل لتجنب مشاكل التزامن
 
-    pks = []
+def fetch_followers(next_max_id=None):
+    """ دالة لجلب المتابعين باستخدام Pagination """
+    url = BASE_URL.format(user_id=USER_ID)
+    params = {'count': "12", 'search_surface': "follow_list_page"}
+    if next_max_id:
+        params['max_id'] = next_max_id
+
+    response = requests.get(url, params=params, headers=HEADERS)
+   # print(response.text)
+
+    if response.status_code == 200:
+        data = response.json()
+        users = data.get('users', [])
+        next_max_id = data.get('next_max_id')
+        
+        with lock:
+            followers.extend([user['pk'] for user in users])
+
+        return next_max_id
+    else:
+        print(f"فشل الطلب: {response.status_code}")
+        return None
+
+def threaded_fetch():
+    """ تشغيل الطلبات باستخدام ThreadPoolExecutor """
     next_max_id = None
-
-    while True:
-        if next_max_id:
-            params['max_id'] = next_max_id
-        response = requests.get(url, params=params, headers=headers)
-        
-        if response.status_code != 200:
-            break
-
-        try:
-            data = response.json()
-            pks.extend([str(user["pk"]) for user in data.get("users", [])])
-            next_max_id = data.get("next_max_id")
-
-            users_data[user_id]['scraped'] = len(pks)
-
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        while True:
+            future = executor.submit(fetch_followers, next_max_id)
+            next_max_id = future.result()
+            
             if not next_max_id:
+                print('t')
                 break
-        except Exception as e:
-            break
 
-    file_path = f"{chat_id}_followers.txt"
-    with open(file_path, "w") as f:
-        f.write("\n".join(pks))
+            #time.sleep(2)  # تأخير لتجنب الحظر
 
-    bot.send_document(chat_id, open(file_path, "rb"), caption=f"تم استخراج {len(pks)} إيدي.")
-    os.remove(file_path)
-
-
-@bot.callback_query_handler(func=lambda call: call.data == "scrape_ids")
-def request_cookie(call):
-    bot.send_message(call.message.chat.id, "أرسل سيشن حساب وهمي حتى تسحب ايديات ")
-    bot.register_next_step_handler(call.message, process_cookie)
-
-
-def process_cookie(message):
-    user_id = message.chat.id
-    users_data[user_id] = {'cookie': message.text}
-    
-    bot.send_message(user_id, "ارسل id حسابك الي تريد تضيفلة كلوز ")
-    bot.register_next_step_handler(message, process_target_id)
-
-
-def process_target_id(message):
-    user_id = message.chat.id
-    users_data[user_id]['target_id'] = message.text
-    users_data[user_id]['scraped'] = 0
-    
-    bot.send_message(user_id, "🚀 بدأ السحب، يمكنك إرسال 'استعلام السحب' لمتابعة التقدم.")
-    #for i in range(5):
-    threading.Thread(target=scrape_ids, args=(user_id, message.chat.id)).start()
-
-
-@bot.message_handler(func=lambda message: message.text == "استعلام السحب")
-def query_scrape_status(message):
-    user_id = message.chat.id
-    count = users_data.get(user_id, {}).get('scraped', 0)
-    bot.send_message(user_id, f"✅ تم سحب {count} إيدي حتى الآن.")
-
-
-# ** إضافة كلوز **
-def add_close_friends(user_id, chat_id):
-    data = users_data[user_id]
-    token, file_path = data['token'], data['file']
-
-    url = "https://i.instagram.com/api/v1/stories/private_stories/add_member/"
-    headers = {
-        'User-Agent': "Instagram 275.0.0.27.98 Android",
-        'authorization': token
-    }
-
-    with open(file_path, "r") as f:
-        ids = f.read().splitlines()
-
-    added = 0
-    for target_id in ids:
-        payload = {'module': "audience_selection", 'source': "self_profile_nav_button", 'user_id': target_id}
-        response = requests.post(url, data=payload, headers=headers)
-        
-        if response.status_code == 200:
-            added += 1
-        users_data[user_id]['added'] = added
-
-    bot.send_message(chat_id, f"✅ تم إضافة {added} أشخاص إلى الكلوز.")
-
-    os.remove(file_path)
-
-
-@bot.callback_query_handler(func=lambda call: call.data == "add_close_friends")
-def request_token(call):
-    bot.send_message(call.message.chat.id, "🔑 أرسل التوكن الخاص بك:")
-    bot.register_next_step_handler(call.message, process_token)
-
-
-def process_token(message):
-    user_id = message.chat.id
-    users_data[user_id] = {'token': message.text}
-
-    bot.send_message(user_id, "📂 أرسل ملف يحتوي على الإيديات:")
-    bot.register_next_step_handler(message, process_id_file)
-
-
-def process_id_file(message):
-    user_id = message.chat.id
-    if not message.document:
-        bot.send_message(user_id, "❌ أرسل ملف صالح!")
-        return
-
-    file_info = bot.get_file(message.document.file_id)
-    file_path = f"{user_id}_ids.txt"
-    downloaded_file = bot.download_file(file_info.file_path)
-
-    with open(file_path, "wb") as f:
-        f.write(downloaded_file)
-
-    users_data[user_id]['file'] = file_path
-    users_data[user_id]['added'] = 0
-
-    bot.send_message(user_id, "🚀 بدأ الإضافة، يمكنك إرسال 'استعلام الكلوز' لمتابعة التقدم.")
-    
-    threading.Thread(target=add_close_friends, args=(user_id, message.chat.id)).start()
-
-
-@bot.message_handler(func=lambda message: message.text == "استعلام الكلوز")
-def query_close_status(message):
-    user_id = message.chat.id
-    count = users_data.get(user_id, {}).get('added', 0)
-    bot.send_message(user_id, f"✅ تم إضافة {count} شخص حتى الآن.")
-
-
-@bot.message_handler(func=lambda message: message.text == "إيقاف كلوز")
-def stop_close_addition(message):
-    user_id = message.chat.id
-    if user_id in users_data:
-        users_data[user_id]['stop'] = True
-        bot.send_message(user_id, "⏹️ تم إيقاف الإضافة.")
-
-# تشغيل البوت
-bot.polling()
-
+if __name__ == "__main__":
+    threaded_fetch()
+    print(f"تم جلب {len(followers)} متابعًا.")
+    print(followers)
